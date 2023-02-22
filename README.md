@@ -24,9 +24,11 @@ mvn package
 - Anotaciones java
 - Intefaces
 - [Maven](https://maven.apache.org/) - Dependency Management
-Podemos encontrar la documentación del proyecto en la ruta 
+### Docuementacion
+- Podemos encontrar la documentacion en el html que se encuentra en la carpetaPodemos encontrar la documentación del proyecto en la ruta 
 ```
-/target/site/apidocts
+/apidocs/index.html
+
 ```
 
 ### Arquitectura de la aplicación
@@ -37,6 +39,8 @@ Podemos encontrar la documentación del proyecto en la ruta
 - Version 1.0.0
 ### Autores
 - Enrique González Suárez
+
+
 ### Ejecuar
 Para ejecutar el servidor web escribimos el comando
 ```

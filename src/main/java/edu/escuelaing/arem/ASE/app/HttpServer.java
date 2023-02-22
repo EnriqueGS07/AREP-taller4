@@ -19,7 +19,7 @@ public class HttpServer {
 
 
     private static HttpServer _instance = new HttpServer();
-    private HashMap<String, String> services = new HashMap<>();
+    private HashMap<String, Method> services = new HashMap<>();
     private OutputStream outputStream;
 
     /**
@@ -74,13 +74,11 @@ public class HttpServer {
             for (Method m: met) {
                 if (m.isAnnotationPresent(RequestMapping.class)){
                     String llave = m.getAnnotation(RequestMapping.class).value();
-                    String string = (String) m.invoke(null);
-                    services.put(llave, string);
+//                    String string = (String) m.invoke(null);
+                    services.put(llave, m);
                 }
             }
         }
-        //Extraer los metodos con requestMapping
-
 
         ServerSocket serverSocket = null;
         try {
@@ -114,12 +112,12 @@ public class HttpServer {
                     requestType = inputLine.split(" ")[0];
                     first_line = false;
                 }
-                System.out.println("Received: " + inputLine);
+//                System.out.println("Received: " + inputLine);
                 if (!in.ready()) {
                     break;
                 }
             }
-
+            System.out.println(request);
             if(!services.containsKey(request)){
                 outputLine = "Content-type: text/html\r\n" +
                         "\r\n" +
@@ -135,7 +133,8 @@ public class HttpServer {
                         + "</html>";;
             }
             else if (requestType.equals("GET")) {
-                outputLine = services.get(request);
+                Method method = services.get(request);
+                outputLine = (String) method.invoke(null);
 
             }else if (request.startsWith("/apps/") && requestType.equals("POST")) {
                 outputLine = "";
