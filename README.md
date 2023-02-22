@@ -21,7 +21,8 @@ mvn package
 
 
 ### Construcción:
-- .
+- Anotaciones java
+- Intefaces
 - [Maven](https://maven.apache.org/) - Dependency Management
 Podemos encontrar la documentación del proyecto en la ruta 
 ```
