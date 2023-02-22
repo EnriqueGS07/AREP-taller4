@@ -4,7 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -51,19 +56,31 @@ public class HttpServer {
      * @throws IOException
      */
     public void run(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
-        String className = args[0];
-        //Cargar clase con forname
-        Class<?> c = Class.forName(args[0]);
-        //Extraer los metodos con requestMapping
-        Method[] met = c.getMethods();
-        for (Method m: met) {
-            if (m.isAnnotationPresent(RequestMapping.class)){
-                String llave = m.getAnnotation(RequestMapping.class).value();
-                String s = (String) m.invoke(null);
-                services.put(llave, s);
-
+        Path path = Paths.get("src/main/java/edu/escuelaing/arem/ASE/app");
+        ArrayList<String> filesList = new ArrayList<>();
+        DirectoryStream<Path> files = Files.newDirectoryStream(path);
+        for (Path file: files) {
+            if(Files.isRegularFile(file) && file.toString().split("\\.")[1].equals("java")){
+                String fileName = file.toString().split("\\.")[0].replace("\\", ".").substring(14);
+                if(Class.forName(fileName).isAnnotationPresent(Component.class)){
+                    System.out.println(fileName + " 2");
+                    filesList.add(fileName);
+                }
             }
         }
+        for (String s:filesList) {
+            Class<?> c = Class.forName(s);
+            Method[] met = c.getMethods();
+            for (Method m: met) {
+                if (m.isAnnotationPresent(RequestMapping.class)){
+                    String llave = m.getAnnotation(RequestMapping.class).value();
+                    String string = (String) m.invoke(null);
+                    services.put(llave, string);
+                }
+            }
+        }
+        //Extraer los metodos con requestMapping
+
 
         ServerSocket serverSocket = null;
         try {
@@ -103,11 +120,19 @@ public class HttpServer {
                 }
             }
 
-//            HashMap<String, String> services = spark2.getServices();
-
-            System.out.println("AAAAAA" + request);
             if(!services.containsKey(request)){
-                outputLine = "";
+                outputLine = "Content-type: text/html\r\n" +
+                        "\r\n" +
+                        "<!DOCTYPE html>"
+                        + "<html>"
+                        + "<head>"
+                        + "<meta charset=\"UTF-8\">"
+                        + "<title>Title of the document</title>\n"
+                        + "</head>"
+                        + "<body>"
+                        + "Error 404"
+                        + "</body>"
+                        + "</html>";;
             }
             else if (requestType.equals("GET")) {
                 outputLine = services.get(request);

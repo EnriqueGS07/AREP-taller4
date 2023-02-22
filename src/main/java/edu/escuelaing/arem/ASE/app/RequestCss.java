@@ -6,12 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Component
-public class Requests {
+public class RequestCss {
 
-    @RequestMapping("/hola")
-    public static String html(){
+    @RequestMapping("/adios")
+    public static String css(){
         String header = "HTTP/1.1 200 OK\r\n" +
-                "Content-type: text/html\r\n" +
+                "Content-type: text/css\r\n" +
                 "\r\n";
         byte[] fileContent;
         try {
